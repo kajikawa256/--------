@@ -1,25 +1,31 @@
 import instaloader
 
+#
+# 2024/05/02 時点で動作確認済み
+# パスワードが簡単すぎると、instagram側でbotチェック作動がするのでエラーが起きる場合がある
+# 【機能】idとパスワードを使ってinstagramにログインし、片思いフォローユーザのIDをリスト形式でreturnする
+#
 
-id = ""
-password = ""
+def get_unfollow_users(id, password):
 
-#インスタグラムにログイン
-loader = instaloader.Instaloader()
-loader.login(id, password)
 
-#指定したIDのprofileオブジェクトを作成
-profile = instaloader.Profile.from_username(loader.context,id)#id:フォロワーを取得したいアカウントのユーザーID
+  # インスタグラムにログイン
+  loader = instaloader.Instaloader()
+  loader.login(id, password)
 
-#指定したIDのフォロワーを全件取得
-followers = profile.get_followers()
-# 指定したIDのフォロー中を全件取得
-following = profile.get_followees()
+  # 指定したIDのprofileオブジェクトを作成
+  profile = instaloader.Profile.from_username(loader.context,id)#id:フォロワーを取得したいアカウントのユーザーID
 
-# リストに変換
-follow = [follower.username for follower in followers]   # フォロワー
-followed = [follower.username for follower in following] # フォロー中
+  # 指定したIDのフォロワーを全件取得
+  followers = profile.get_followers()
+  # 指定したIDのフォロー中を全件取得
+  following = profile.get_followees()
 
-print(len(follow))
-print(len(followed))
+  # リストに変換
+  follower = [follower.username for follower in followers]   # フォロワー
+  followed = [follower.username for follower in following]   # フォロー中
 
+  # 片思いフォローユーザIDの取得 (フォロー中のユーザリストからフォロワーをフィルタリング)
+  filterd_list =  [x for x in followed if x not in follower]
+
+  return filterd_list
