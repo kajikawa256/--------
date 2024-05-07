@@ -8,10 +8,10 @@ from get_oneway_love_follow_users import get_unfollow_users
 
 
 #区切り線#
-split_line = "-" * 50
-global liker
-global liker_list
-file_path = "profile_list.txt"
+# split_line = "-" * 50
+# global liker
+# global liker_list
+# file_path = "profile_list.txt"
 
 
 # --------------login_process-----------------
@@ -19,105 +19,78 @@ def button_click():
 
     profile_name= input_profile_name.get()  # id
     password= input_password.get()          # password
-    interval = int(time_interval.get())          # 揺らぎの間隔
+    interval = int(time_interval.get())     # 揺らぎの間隔
     nums = unfollow_nums.get()              # フォロー解除人数
-
-    driver = webdriver.Chrome() # インスタンス作成
-    driver.maximize_window()    # 全画面表示
 
 
     #----ログイン操作---
+    options = webdriver.ChromeOptions()
+    options.add_argument("--start-maximized")    # ウィンドウを最大化
+    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36") # User-Agentの設定
+    # options.add_argument("--headless")         # ヘッドレスモードで実行
+
+
+    driver = webdriver.Chrome(options=options) # オプションを設定し、インスタンス作成
+
 
     #instagramにアクセス
     driver.get("https://www.instagram.com/accounts/login/")
-    driver.implicitly_wait(10)
-    sleep(1)
+    sleep(5)
     #ログインID・PWを入力
     elem_search_word = driver.find_element(By.NAME,"username")
     elem_search_word.send_keys(profile_name)
-    sleep(1)
+    sleep(5)
     ppassword= driver.find_element(By.NAME,'password')
     ppassword.send_keys(password)
-    sleep(1)
-    ppassword.send_keys(Keys.ENTER)
     sleep(4)
-
-    # 片思いフォロー中のユーザIDを取得
-    filterd_list = get_unfollow_users(profile_name,password)
-    # 片思いフォロー中のユーザIDを表示
-    print(filterd_list)
+    ppassword.send_keys(Keys.ENTER)
+    sleep(3)
 
 
     #---フォロー解除処理---
     # プロフィール画面へ遷移
-    driver.get("https://www.instagram.com/{}/following/".format(profile_name))
+    driver.get(f"https://www.instagram.com/{profile_name}/following/")
     sleep(8)
 
-    # 操作できる画面の一覧を取得(Popup後に処理)
-    handle_array = driver.window_handles
 
-    print(handle_array)
-
-    sleep(2000)
-
+    # 片思いフォロー中のユーザIDリスト(filterd_list)とフォロー中のユーザ数(following_num)を取得
+    filterd_list,following_num = get_unfollow_users(profile_name,password)
 
 
     # 自動スクロール
-    for i in range(int(scroll)): #スクロールさせたいかを入力 10スクロールで58人　100スクロールで580人　1000スクロールで5800人
+    scroll = following_num / 5 # スクロール数を自動で計算
+    li = driver.find_element(By.CLASS_NAME,"_aano")
+    for i in range(int(scroll)): # スクロール数を入力 10スクロールで58人　100スクロールで580人　1000スクロールで5800人
         driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", li)
-        sleep(random.randint(500,1000)/1000)
+        sleep(random.randint(1000,10000)/1000) # 1~10秒のランダム秒数間隔でスクロール
 
 
     # フォローボタン一括取得
     following  = driver.find_element(By.CLASS_NAME,"_aano")
     followingbtns = following.find_elements(By.CLASS_NAME,"_acan._acap._acat")
+    user_names = following.find_elements(By.CLASS_NAME,"_ap3a")
 
 
-    # フォロー解除数を定義
-    if int(nums) > len(followingbtns):
-        nums = len(followingbtns)
+    # filterd_listと一致した行のフォロー中ボタンをクリックし、フォローを解除する
+    index = 0
+    unfollow_nums_count = 0 # フォロー解除した人数
+    for name in user_names:
+        if name.text in "フォロー中":
+            continue
+        if name.text in filterd_list:
+            followingbtns[index].click()                             # フォロー中クリック
+            sleep(3)
+            driver.find_element(By.CLASS_NAME,"_a9--._a9-_").click() # フォローをやめるクリック
+            sleep(3 + interval)
 
-    # フォロー解除
-    for i in range(int(nums)):
-        followingbtns[i].click()
-        sleep(3)
-        try:
-            unfollow = driver.find_element(By.CLASS_NAME,"_a9--")
-            unfollow.click()
-            sleep(interval)
-        except:
-            sleep(interval)
-            pass
+        index+=1
+        unfollow_nums_count+=1
 
-    scroll = 10
+        # 解除した人数が指定した人数になればループ抜ける
+        if nums == unfollow_nums_count:
+            break
 
-    li = driver.find_element(By.CSS_SELECTOR,"div.isgrP")
-    # 自動スクロール
-    for i in range(int(scroll)): #スクロールさせたいかを入力 10スクロールで58人　100スクロールで580人　1000スクロールで5800人
-        driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", li)
-        sleep(random.randint(500,1000)/1000)
-
-    # フォローボタン一括取得
-    following  = driver.find_element(By.CLASS_NAME,"_aano")
-    followingbtns = following.find_elements(By.CLASS_NAME,"_acan._acap._acat")
-
-    print(len(followingbtns))
-
-
-    # followingbtns[0].click()
-    # sleep(3)
-    # driver.find_element(By.CLASS_NAME,"_a9--").click()
-
-    print("{}人フォロー解除完了".format(nums))
-    # sleep(1000)
-    # for x in filterd_list:
-    #     url = f'https://www.instagram.com/{x}/'
-    #     driver.get(url)
-    #     sleep(5)
-    #     driver.find_element(By.CLASS_NAME,' _acan _acap _acat _aj1- _ap30').click()
-    #     sleep(5)
-    #     driver.find_element(By.XPATH,'/html/body/div[7]/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div/div[8]/div[1]/div/div/div[1]/div/div').click()
-
+    # driverの開放
     driver.close()
 
 
