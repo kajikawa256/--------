@@ -69,5 +69,60 @@ for name in user_names:
   index+=1
 
 
-sleep(2000)
 
+
+#-----------------以下tkinter(画面描画)の処理-------------------#
+
+#ウインドウの作成
+root = tkinter.Tk()
+root.title("インスタ自動フォロー解除ツール")
+root.geometry("300x150")
+
+
+font=tkinter.font.Font(
+    root,size =10
+)
+
+
+# ID label
+input_profile_name_label = tkinter.Label(text="ID" ,font=font)
+input_profile_name_label.grid(row=1, column=1, padx=10,)
+
+# input_ID
+input_profile_name = tkinter.Entry(width=20)
+input_profile_name.grid(row=1, column=2)
+
+
+# PASSWORD
+input_password_label = tkinter.Label(text="PASS")
+input_password_label.grid(row=2, column=1, padx=10,)
+
+# PASWORD欄の作成
+input_password = tkinter.Entry(show="*",width=20)
+input_password.grid(row=2, column=2)
+
+
+# フォロー解除人数
+unfollow_nums_label = tkinter.Label(text="フォロー解除人数")
+unfollow_nums_label.grid(row=3, column=1, padx=10,)
+
+# フォロー解除人数欄の作成
+unfollow_nums = tkinter.Entry(width=20)
+unfollow_nums.grid(row=3, column=2)
+
+
+# 揺らぎの間隔
+time_interval_lavel = tkinter.Label(text="揺らぎの間隔(秒単位)")
+time_interval_lavel.grid(row=4, column=1, padx=10,)
+
+# 揺らぎの間隔欄の作成
+time_interval = tkinter.Entry(width=20)
+time_interval.grid(row=4, column=2)
+
+
+#ボタンの作成
+button = tkinter.Button(text="実行",command=button_click)
+button.place(x=250, y=100)
+
+#ウインドウの描画
+root.mainloop()
