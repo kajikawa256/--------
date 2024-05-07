@@ -5,9 +5,14 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import random
 from get_oneway_love_follow_users import get_unfollow_users
+
  #----ログイン操作---
-driver = webdriver.Chrome() # インスタンス作成
-driver.maximize_window()    # 全画面表示
+options = webdriver.ChromeOptions()
+options.add_argument("--start-maximized")  # ウィンドウを最大化
+# options.add_argument("--headless")         # ヘッドレスモードで実行
+
+driver = webdriver.Chrome(options=options) # オプションを設定し、インスタンス作成
+
 
 profile_name = "coconara_check"
 password = "T2qYUgVR"
@@ -34,8 +39,8 @@ sleep(4)
 
 #---フォロー解除処理---
 # プロフィール画面へ遷移
-driver.get("https://www.instagram.com/{}/following/".format(profile_name))
-sleep(8)
+driver.get(f"https://www.instagram.com/{profile_name}/following/")
+sleep(5)
 
 li = driver.find_element(By.CLASS_NAME,"_aano")
 # 自動スクロール
