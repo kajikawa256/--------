@@ -4,7 +4,7 @@ import tkinter,tkinter.font
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import random
-from component.get_oneway_love_follow_users import get_unfollow_users
+from get_oneway_love_follow_users import get_unfollow_users
 
 
 #区切り線#
@@ -47,27 +47,31 @@ def button_click():
     # 片思いフォロー中のユーザIDを表示
     print(filterd_list)
 
-    # # ユーザのページにいちいちアクセスする方式
-    # for x in filterd_list:
-    #     driver.get(f"https://www.instagram.com/{x}/")
-    #     sleep(5)
-    #     driver.find_element(By.CLASS_NAME," _acan _acap _acat _aj1- _ap30").click()
-    #     sleep(3)
-    #     driver.find_element(By.CLASS_NAME, "x1i10hfl").click()
-    #     sleep(3)
-
 
     #---フォロー解除処理---
     # プロフィール画面へ遷移
     driver.get("https://www.instagram.com/{}/following/".format(profile_name))
     sleep(8)
 
+    # 操作できる画面の一覧を取得(Popup後に処理)
+    handle_array = driver.window_handles
+
+    print(handle_array)
+
+    sleep(2000)
+
+
+
+    # 自動スクロール
+    for i in range(int(scroll)): #スクロールさせたいかを入力 10スクロールで58人　100スクロールで580人　1000スクロールで5800人
+        driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", li)
+        sleep(random.randint(500,1000)/1000)
+
 
     # フォローボタン一括取得
     following  = driver.find_element(By.CLASS_NAME,"_aano")
     followingbtns = following.find_elements(By.CLASS_NAME,"_acan._acap._acat")
 
-    print(len(followingbtns))
 
     # フォロー解除数を定義
     if int(nums) > len(followingbtns):
