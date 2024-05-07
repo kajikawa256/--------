@@ -7,7 +7,7 @@
 "hoge"のセールスポイントや差別化などを説明する
  
 # Requirement
-selenium 4.20.0
+* selenium 4.20.0
  
 
  
