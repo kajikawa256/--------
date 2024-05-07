@@ -44,10 +44,11 @@ for i in range(int(scroll)): #スクロールさせたいかを入力 10スク�
     driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", li)
     sleep(random.randint(500,1000)/1000)
 
-# # 操作できる画面の一覧を取得(Popup後に処理)
-# handle_array = driver.window_handles
+# フォローボタン一括取得
+following  = driver.find_element(By.CLASS_NAME,"_aano")
+followingbtns = following.find_elements(By.CLASS_NAME,"_acan._acap._acat")
 
-# print(handle_array)
+print(len(followingbtns))
 
 sleep(2000)
 
