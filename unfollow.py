@@ -4,7 +4,7 @@ import tkinter,tkinter.font
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import random
-from component.get_oneway_love_follow_users import get_unfollow_users
+from get_oneway_love_follow_users import get_unfollow_users
 
 
 #区切り線#
