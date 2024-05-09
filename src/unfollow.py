@@ -84,8 +84,9 @@ def button_click():
             print(f"ループを抜けます：{unfollow_nums_count}")
             break
 
+    # 終了処理
     print("エラーなし　処理を終了します。")
-
+    sleep(3)
     # driverの開放
     driver.close()
     # tkinterの終了
