@@ -7,20 +7,13 @@ import random
 from get_oneway_love_follow_users import get_unfollow_users
 
 
-#区切り線#
-# split_line = "-" * 50
-# global liker
-# global liker_list
-# file_path = "profile_list.txt"
-
-
 # --------------login_process-----------------
 def button_click():
 
     profile_name= input_profile_name.get()  # id
     password= input_password.get()          # password
     interval = int(time_interval.get())     # 揺らぎの間隔
-    nums = unfollow_nums.get()              # フォロー解除人数
+    nums = int(unfollow_nums.get())         # フォロー解除人数
 
 
     #----ログイン操作---
@@ -35,22 +28,22 @@ def button_click():
 
     #instagramにアクセス
     driver.get("https://www.instagram.com/accounts/login/")
-    sleep(5)
+    sleep(random.randint(3000,5000)/1000)
     #ログインID・PWを入力
     elem_search_word = driver.find_element(By.NAME,"username")
     elem_search_word.send_keys(profile_name)
-    sleep(5)
+    sleep(random.randint(4000,6000)/1000)
     ppassword= driver.find_element(By.NAME,'password')
     ppassword.send_keys(password)
-    sleep(4)
+    sleep(random.randint(3500,7000)/1000)
     ppassword.send_keys(Keys.ENTER)
-    sleep(3)
+    sleep(random.randint(3000,4200)/1000)
 
 
     #---フォロー解除処理---
     # プロフィール画面へ遷移
     driver.get(f"https://www.instagram.com/{profile_name}/following/")
-    sleep(8)
+    sleep(random.randint(8200,10020)/1000)
 
 
     # 片思いフォロー中のユーザIDリスト(filterd_list)とフォロー中のユーザ数(following_num)を取得
@@ -79,19 +72,24 @@ def button_click():
             continue
         if name.text in filterd_list:
             followingbtns[index].click()                             # フォロー中クリック
-            sleep(3)
+            sleep(random.randint(3000,10000)/1000)
             driver.find_element(By.CLASS_NAME,"_a9--._a9-_").click() # フォローをやめるクリック
-            sleep(3 + interval)
+            sleep(random.randint(3000,10000)/1000 + interval)
+            unfollow_nums_count+=1  # フォロー解除した人数を+1
 
         index+=1
-        unfollow_nums_count+=1
 
         # 解除した人数が指定した人数になればループ抜ける
         if nums == unfollow_nums_count:
+            print(f"ループを抜けます：{unfollow_nums_count}")
             break
+
+    print("エラーなし　処理を終了します。")
 
     # driverの開放
     driver.close()
+    # tkinterの終了
+    root.destroy()
 
 
 
