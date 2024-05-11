@@ -23,10 +23,10 @@ seleniumのインストール方法
 ```bash
 pip install selenium
 ```
-instaroaderのインストール方法
+instaloaderのインストール方法
  
 ```bash
-pip install instaroader
+pip install instaloader
 ```
  
 # Usage
