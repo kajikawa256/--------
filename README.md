@@ -13,6 +13,7 @@ https://github.com/kajikawa256/Instagram_Auto_Operation/assets/87938576/5cddaac2
 # Requirement
 * Python 3.11.1
 * selenium 4.20.0
+* instaloader 4.11
 
  
 # Installation
@@ -21,6 +22,11 @@ seleniumのインストール方法
  
 ```bash
 pip install selenium
+```
+instaroaderのインストール方法
+ 
+```bash
+pip install instaroader
 ```
  
 # Usage
