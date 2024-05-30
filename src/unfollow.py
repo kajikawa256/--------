@@ -5,6 +5,11 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import random
 from get_oneway_love_follow_users import get_unfollow_users
+# 2024/05/28 追加
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+
 
 
 # --------------login_process-----------------
@@ -14,6 +19,7 @@ def button_click():
     password= input_password.get()          # password
     interval = int(time_interval.get())     # 揺らぎの間隔
     nums = int(unfollow_nums.get())         # フォロー解除人数
+    operation_kind = mode_var.get()         # 半自動か全自動
 
 
     #----ログイン操作---
@@ -41,21 +47,45 @@ def button_click():
 
 
     #---フォロー解除処理---
-    # プロフィール画面へ遷移
-    driver.get(f"https://www.instagram.com/{profile_name}/following/")
-    sleep(random.randint(8200,10020)/1000)
-
-
     # 片思いフォロー中のユーザIDリスト(filterd_list)とフォロー中のユーザ数(following_num)を取得
+    print("ユーザリスト取得中...")
     filterd_list,following_num = get_unfollow_users(profile_name,password)
+    print("取得完了")
+
+
+    # プロフィール画面へ遷移
+    driver.get(f"https://www.instagram.com/{profile_name}/")
+
+
+    # 全自動と半自動で処理を分ける
+    if operation_kind in "全自動":
+        # 全自動
+        # フォロー画面表示
+        driver.get(f"https://www.instagram.com/{profile_name}/following/")
+    else:
+        # 半自動
+        input("フォロー中の欄を開いてください、準備ができたらEnterキーを押してください...")
 
 
     # 自動スクロール
     scroll = following_num / 5 # スクロール数を自動で計算
-    li = driver.find_element(By.CLASS_NAME,"_aano")
-    for i in range(int(scroll)): # スクロール数を入力 10スクロールで58人　100スクロールで580人　1000スクロールで5800人
-        driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", li)
-        sleep(random.randint(1000,10000)/1000) # 1~10秒のランダム秒数間隔でスクロール
+    sleep(random.randint(5200,8020)/1000)
+    try:
+        li = driver.find_element(By.CLASS_NAME,"_aano")
+        for i in range(int(scroll)): # スクロール数を入力 10スクロールで58人　100スクロールで580人　1000スクロールで5800人
+            driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", li)
+            sleep(random.randint(1000,10000)/1000) # 1~10秒のランダム秒数間隔でスクロール
+    except:
+        print("---------------------------")
+        print("ユーザ読み込みエラー")
+        print("半自動で再度お試しください")
+        print("---------------------------")
+        sleep(10)
+        # driverの開放
+        driver.close()
+        # tkinterの終了
+        root.destroy()
+        exit()
 
 
     # フォローボタン一括取得
@@ -81,12 +111,13 @@ def button_click():
 
         # 解除した人数が指定した人数になればループ抜ける
         if nums == unfollow_nums_count:
-            print(f"ループを抜けます：{unfollow_nums_count}")
+            print(f"{unfollow_nums_count}人のユーザをフォロー解除しました")
             break
+
 
     # 終了処理
     print("エラーなし　処理を終了します。")
-    sleep(3)
+    sleep(10)
     # driverの開放
     driver.close()
     # tkinterの終了
@@ -96,57 +127,61 @@ def button_click():
 
 
 #-----------------以下tkinter(画面描画)の処理-------------------#
-
-#ウインドウの作成
+# ウインドウの作成
 root = tkinter.Tk()
 root.title("インスタ自動フォロー解除ツール")
 root.geometry("300x150")
 
-
-font=tkinter.font.Font(
-    root,size =10
+font = tkinter.font.Font(
+    root, size=10
 )
 
-
 # ID label
-input_profile_name_label = tkinter.Label(text="ID" ,font=font)
-input_profile_name_label.grid(row=1, column=1, padx=10,)
+input_profile_name_label = tkinter.Label(text="ID", font=font)
+input_profile_name_label.grid(row=1, column=1, padx=10)
 
 # input_ID
 input_profile_name = tkinter.Entry(width=20)
 input_profile_name.grid(row=1, column=2)
 
-
 # PASSWORD
 input_password_label = tkinter.Label(text="PASS")
-input_password_label.grid(row=2, column=1, padx=10,)
+input_password_label.grid(row=2, column=1, padx=10)
 
 # PASWORD欄の作成
-input_password = tkinter.Entry(show="*",width=20)
+input_password = tkinter.Entry(show="*", width=20)
 input_password.grid(row=2, column=2)
-
 
 # フォロー解除人数
 unfollow_nums_label = tkinter.Label(text="フォロー解除人数")
-unfollow_nums_label.grid(row=3, column=1, padx=10,)
+unfollow_nums_label.grid(row=3, column=1, padx=10)
 
 # フォロー解除人数欄の作成
 unfollow_nums = tkinter.Entry(width=20)
 unfollow_nums.grid(row=3, column=2)
 
-
 # 揺らぎの間隔
-time_interval_lavel = tkinter.Label(text="揺らぎの間隔(秒単位)")
-time_interval_lavel.grid(row=4, column=1, padx=10,)
+time_interval_label = tkinter.Label(text="揺らぎの間隔(秒単位)")
+time_interval_label.grid(row=4, column=1, padx=10)
 
 # 揺らぎの間隔欄の作成
 time_interval = tkinter.Entry(width=20)
 time_interval.grid(row=4, column=2)
 
+# ラジオボタンの状態を保持するための変数
+mode_var = tkinter.StringVar(value="全自動")
+
+# 全自動ラジオボタン
+radio_auto = tkinter.Radiobutton(root, text="全自動", variable=mode_var, value="全自動")
+radio_auto.grid(row=5, column=1, pady=10)
+
+# 半自動ラジオボタン
+radio_semi_auto = tkinter.Radiobutton(root, text="半自動", variable=mode_var, value="半自動")
+radio_semi_auto.grid(row=5, column=2, pady=10)
 
 #ボタンの作成
 button = tkinter.Button(text="実行",command=button_click)
 button.place(x=250, y=100)
 
-#ウインドウの描画
+# ウインドウの描画
 root.mainloop()
