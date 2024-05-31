@@ -49,7 +49,17 @@ def button_click():
     #---フォロー解除処理---
     # 片思いフォロー中のユーザIDリスト(filterd_list)とフォロー中のユーザ数(following_num)を取得
     print("ユーザリスト取得中...")
-    filterd_list,following_num = get_unfollow_users(profile_name,password)
+    try:
+        filterd_list,following_num = get_unfollow_users(profile_name,password)
+    except:
+        print("ユーザリスト取得エラー")
+        print("しばらく時間をおいてから再度お試しください")
+        sleep(10)
+        # driverの開放
+        driver.close()
+        # tkinterの終了
+        root.destroy()
+        exit()
     print("取得完了")
 
 
