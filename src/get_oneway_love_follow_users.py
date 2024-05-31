@@ -14,7 +14,10 @@ def get_unfollow_users(id, password):
   try:
     loader.login(id, password)
   except:
-    print("認証エラー")
+    print("---------------------------")
+    print("アカウント認証エラー")
+    print("時間が経ってから再度お試しください")
+    print("---------------------------")
     exit()
 
   # 指定したIDのprofileオブジェクトを作成
